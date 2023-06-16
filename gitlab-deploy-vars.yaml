@@ -1,0 +1,407 @@
+---
+- name: Deploy Vars in Gitlab CI/CD
+  hosts: localhost
+  tasks:
+    - name: Set or update some CI/CD variables
+      community.general.gitlab_project_variable:
+        api_url: https://gitlab.devops.decea.intraer
+        api_token: "{{ lookup('env', 'GITLAB_TOKEN') }}"
+        project: "{{ lookup('env', 'PROJECT_PATH') }}"
+        purge: false
+        vars:
+          NODE_VERSION:
+            value: "{{ lookup('env', 'NODE_VERSION') }}"
+            masked: false
+            protected: false
+            variable_type: env_var
+            environment_scope: '*'
+          APP_NAME:
+            value: "{{ lookup('env', 'APP_NAME') }}"
+            masked: false
+            protected: false
+            variable_type: env_var
+            environment_scope: '*'
+          REPLICAS_dev:
+            value: "{{ lookup('env', 'REPLICAS_dev') }}"
+            masked: false
+            protected: false
+            variable_type: env_var
+            environment_scope: '*'
+          REPLICAS:
+            value: "{{ lookup('env', 'REPLICAS') }}"
+            masked: false
+            protected: false
+            variable_type: env_var
+            environment_scope: 'prod'
+          DOMAIN_dev:
+            value: "{{ lookup('env', 'DOMAIN_dev') }}"
+            masked: false
+            protected: false
+            variable_type: env_var
+            environment_scope: '*'
+          DOMAIN:
+            value: "{{ lookup('env', 'DOMAIN') }}"
+            masked: false
+            protected: false
+            variable_type: env_var
+            environment_scope: 'prod'
+          DOMAIN_LOCALPROD_dev:
+            value: "{{ lookup('env', 'DOMAIN_LOCALPROD_dev') }}"
+            masked: false
+            protected: false
+            variable_type: env_var
+            environment_scope: '*'
+          DOMAIN_LOCALPROD:
+            value: "{{ lookup('env', 'DOMAIN_LOCALPROD') }}"
+            masked: false
+            protected: false
+            variable_type: env_var
+            environment_scope: 'prod'
+          UPDATE_PARALLELISM:
+            value: "{{ lookup('env', 'UPDATE_PARALLELISM') }}"
+            masked: false
+            protected: false
+            variable_type: env_var
+            environment_scope: '*'
+          SUBPATH:
+            value: "{{ lookup('env', 'SUBPATH') }}"
+            masked: false
+            protected: false
+            variable_type: env_var
+            environment_scope: '*'
+          SUBPATH_TRAEFIK:
+            value: "{{ lookup('env', 'SUBPATH_TRAEFIK') }}"
+            masked: false
+            protected: false
+            variable_type: env_var
+            environment_scope: '*'
+          ENV:
+            value: "{{ lookup('env', 'ENV') }}"
+            masked: false
+            protected: false
+            variable_type: env_var
+            environment_scope: '*'
+          MIGRATIONS:
+            value: "{{ lookup('env', 'MIGRATIONS') }}"
+            masked: false
+            protected: false
+            variable_type: env_var
+            environment_scope: 'prod'
+          MIGRATIONS_dev:
+            value: "{{ lookup('env', 'MIGRATIONS_dev') }}"
+            masked: false
+            protected: false
+            variable_type: env_var
+            environment_scope: '*'
+          POSTGRES:
+            value: "{{ lookup('env', 'POSTGRES') }}"
+            masked: false
+            protected: false
+            variable_type: env_var
+            environment_scope: '*'
+          POSTGRES_VERSION:
+            value: "{{ lookup('env', 'POSTGRES_VERSION') }}"
+            masked: false
+            protected: false
+            variable_type: env_var
+            environment_scope: '*'
+          POSTGRES_DB:
+            value: "{{ lookup('env', 'POSTGRES_DB') }}"
+            masked: false
+            protected: false
+            variable_type: env_var
+            environment_scope: '*'
+          POSTGRES_USER:
+            value: "{{ lookup('env', 'POSTGRES_USER') }}"
+            masked: false
+            protected: false
+            variable_type: env_var
+            environment_scope: '*'
+          POSTGRES_PASSWORD:
+            value: "{{ lookup('env', 'POSTGRES_PASSWORD') }}"
+            masked: false
+            protected: false
+            variable_type: env_var
+            environment_scope: 'prod'
+          POSTGRES_PASSWORD_dev:
+            value: "{{ lookup('env', 'POSTGRES_PASSWORD_dev') }}"
+            masked: false
+            protected: false
+            variable_type: env_var
+            environment_scope: '*'
+          POSTGRES_HOST:
+            value: "{{ lookup('env', 'POSTGRES_HOST') }}"
+            masked: false
+            protected: false
+            variable_type: env_var
+            environment_scope: '*'
+          MIGRATE_DROP:
+            value: "{{ lookup('env', 'MIGRATE_DROP') }}"
+            masked: false
+            protected: false
+            variable_type: env_var
+            environment_scope: 'prod'
+          MIGRATE_DROP_dev:
+            value: "{{ lookup('env', 'MIGRATE_DROP_dev') }}"
+            masked: false
+            protected: false
+            variable_type: env_var
+            environment_scope: '*'
+          MIGRATIONS_WITH_TYPEORM:
+            value: "{{ lookup('env', 'MIGRATIONS_WITH_TYPEORM') }}"
+            masked: false
+            protected: false
+            variable_type: env_var
+            environment_scope: '*'
+          MINIO_ENDPOINT:
+            value: "{{ lookup('env', 'MINIO_ENDPOINT') }}"
+            masked: false
+            protected: false
+            variable_type: env_var
+            environment_scope: 'prod'
+          MINIO_KEY:
+            value: "{{ lookup('env', 'MINIO_KEY') }}"
+            masked: false
+            protected: false
+            variable_type: env_var
+            environment_scope: 'prod'
+          MINIO_SECRET:
+            value: "{{ lookup('env', 'MINIO_SECRET') }}"
+            masked: false
+            protected: false
+            variable_type: env_var
+            environment_scope: 'prod'
+          MINIO_BUCKET:
+            value: "{{ lookup('env', 'MINIO_BUCKET') }}"
+            masked: false
+            protected: false
+            variable_type: env_var
+            environment_scope: 'prod'
+          NODE_ID:
+            value: "{{ lookup('env', 'NODE_ID') }}"
+            masked: false
+            protected: false
+            variable_type: env_var
+            environment_scope: 'prod'
+          NODE_ID_dev:
+            value: "{{ lookup('env', 'NODE_ID_dev') }}"
+            masked: false
+            protected: false
+            variable_type: env_var
+            environment_scope: '*'
+          ACCESS_TOKEN_SECRET:
+            value: "{{ lookup('env', 'ACCESS_TOKEN_SECRET') }}"
+            masked: false
+            protected: false
+            variable_type: env_var
+            environment_scope: 'prod'
+          ACCESS_TOKEN_SECRET_dev:
+            value: "{{ lookup('env', 'ACCESS_TOKEN_SECRET_dev') }}"
+            masked: false
+            protected: false
+            variable_type: env_var
+            environment_scope: '*'
+          ACCESS_TOKEN_EXPIRATION:
+            value: "{{ lookup('env', 'ACCESS_TOKEN_EXPIRATION') }}"
+            masked: false
+            protected: false
+            variable_type: env_var
+            environment_scope: 'prod'
+          ACCESS_TOKEN_EXPIRATION_dev:
+            value: "{{ lookup('env', 'ACCESS_TOKEN_EXPIRATION_dev') }}"
+            masked: false
+            protected: false
+            variable_type: env_var
+            environment_scope: '*'
+          TRAEFIK:
+            value: "{{ lookup('env', 'TRAEFIK') }}"
+            masked: false
+            protected: false
+            variable_type: env_var
+            environment_scope: '*'
+          KONG_NETWORK:
+            value: "{{ lookup('env', 'KONG_NETWORK') }}"
+            masked: false
+            protected: false
+            variable_type: env_var
+            environment_scope: '*'
+          SERVER_PORT:
+            value: "{{ lookup('env', 'SERVER_PORT') }}"
+            masked: false
+            protected: false
+            variable_type: env_var
+            environment_scope: '*'
+          TIMEZONE:
+            value: "{{ lookup('env', 'TIMEZONE') }}"
+            masked: false
+            protected: false
+            variable_type: env_var
+            environment_scope: '*'
+          FRONTEND_URL_dev:
+            value: "{{ lookup('env', 'FRONTEND_URL_dev') }}"
+            masked: false
+            protected: false
+            variable_type: env_var
+            environment_scope: '*'
+          FRONTEND_URL:
+            value: "{{ lookup('env', 'FRONTEND_URL') }}"
+            masked: false
+            protected: false
+            variable_type: env_var
+            environment_scope: 'prod'
+          ENDPOINT_CACHE_TLS:
+            value: "{{ lookup('env', 'ENDPOINT_CACHE_TLS') }}"
+            masked: false
+            protected: false
+            variable_type: env_var
+            environment_scope: '*'
+          ENDPOINT_CACHE_MAX_REQUESTS:
+            value: "{{ lookup('env', 'ENDPOINT_CACHE_MAX_REQUESTS') }}"
+            masked: false
+            protected: false
+            variable_type: env_var
+            environment_scope: '*'
+          POSTGRES_SCHEMA:
+            value: "{{ lookup('env', 'POSTGRES_SCHEMA') }}"
+            masked: false
+            protected: false
+            variable_type: env_var
+            environment_scope: '*'
+          POSTGRES_SYNCHRONIZE:
+            value: "{{ lookup('env', 'POSTGRES_SYNCHRONIZE') }}"
+            masked: false
+            protected: false
+            variable_type: env_var
+            environment_scope: '*'
+          POSTGRES_DEBUG_dev:
+            value: "{{ lookup('env', 'POSTGRES_DEBUG_dev') }}"
+            masked: false
+            protected: false
+            variable_type: env_var
+            environment_scope: '*'
+          POSTGRES_DEBUG:
+            value: "{{ lookup('env', 'POSTGRES_DEBUG') }}"
+            masked: false
+            protected: false
+            variable_type: env_var
+            environment_scope: 'prod'
+          POSTGRES_METADATA_CACHE:
+            value: "{{ lookup('env', 'POSTGRES_METADATA_CACHE') }}"
+            masked: false
+            protected: false
+            variable_type: env_var
+            environment_scope: '*'
+          JWT_PUB_dev:
+            value: "{{ lookup('env', 'JWT_PUB_dev') }}"
+            masked: false
+            protected: false
+            variable_type: env_var
+            environment_scope: '*'
+          JWT_PUB:
+            value: "{{ lookup('env', 'JWT_PUB') }}"
+            masked: false
+            protected: false
+            variable_type: env_var
+            environment_scope: 'prod'
+          JWT_SECRET_dev:
+            value: "{{ lookup('env', 'JWT_SECRET_dev') }}"
+            masked: false
+            protected: false
+            variable_type: env_var
+            environment_scope: '*'
+          JWT_SECRET:
+            value: "{{ lookup('env', 'JWT_SECRET') }}"
+            masked: false
+            protected: false
+            variable_type: env_var
+            environment_scope: 'prod'
+          JWT_EXPIRE_TIME:
+            value: "{{ lookup('env', 'JWT_EXPIRE_TIME') }}"
+            masked: false
+            protected: false
+            variable_type: env_var
+            environment_scope: '*'
+          JWT_NEVER_EXPIRES:
+            value: "{{ lookup('env', 'JWT_NEVER_EXPIRES') }}"
+            masked: false
+            protected: false
+            variable_type: env_var
+            environment_scope: '*'
+          JWT_ISSUER_dev:
+            value: "{{ lookup('env', 'JWT_ISSUER_dev') }}"
+            masked: false
+            protected: false
+            variable_type: env_var
+            environment_scope: '*'
+          JWT_ISSUER:
+            value: "{{ lookup('env', 'JWT_ISSUER') }}"
+            masked: false
+            protected: false
+            variable_type: env_var
+            environment_scope: 'prod'
+          COOKIE_ENABLED:
+            value: "{{ lookup('env', 'COOKIE_ENABLED') }}"
+            masked: false
+            protected: false
+            variable_type: env_var
+            environment_scope: '*'
+          MAIL_FROM_ADDRESS_dev:
+            value: "{{ lookup('env', 'MAIL_FROM_ADDRESS_dev') }}"
+            masked: false
+            protected: false
+            variable_type: env_var
+            environment_scope: '*'
+          MAIL_FROM_ADDRESS:
+            value: "{{ lookup('env', 'MAIL_FROM_ADDRESS') }}"
+            masked: false
+            protected: false
+            variable_type: env_var
+            environment_scope: 'prod'
+          MAIL_FROM_NAME_dev:
+            value: "{{ lookup('env', 'MAIL_FROM_NAME_dev') }}"
+            masked: false
+            protected: false
+            variable_type: env_var
+            environment_scope: '*'
+          MAIL_FROM_NAME:
+            value: "{{ lookup('env', 'MAIL_FROM_NAME') }}"
+            masked: false
+            protected: false
+            variable_type: env_var
+            environment_scope: 'prod'
+          MAIL_IGNORETLS:
+            value: "{{ lookup('env', 'MAIL_IGNORETLS') }}"
+            masked: false
+            protected: false
+            variable_type: env_var
+            environment_scope: '*'
+          MAIL_SECURE:
+            value: "{{ lookup('env', 'MAIL_SECURE') }}"
+            masked: false
+            protected: false
+            variable_type: env_var
+            environment_scope: '*'
+          PUBLICATIONS_PUBLISHED_ENDPOINT_dev:
+            value: "{{ lookup('env', 'PUBLICATIONS_PUBLISHED_ENDPOINT_dev') }}"
+            masked: false
+            protected: false
+            variable_type: env_var
+            environment_scope: '*'
+          PUBLICATIONS_PUBLISHED_ENDPOINT:
+            value: "{{ lookup('env', 'PUBLICATIONS_PUBLISHED_ENDPOINT') }}"
+            masked: false
+            protected: false
+            variable_type: env_var
+            environment_scope: 'prod'
+          PUBLICATIONS_REVOKED_ENDPOINT_dev:
+            value: "{{ lookup('env', 'PUBLICATIONS_REVOKED_ENDPOINT_dev') }}"
+            masked: false
+            protected: false
+            variable_type: env_var
+            environment_scope: 'prod'
+          PUBLICATIONS_REVOKED_ENDPOINT:
+            value: "{{ lookup('env', 'PUBLICATIONS_REVOKED_ENDPOINT') }}"
+            masked: false
+            protected: false
+            variable_type: env_var
+            environment_scope: 'prod'

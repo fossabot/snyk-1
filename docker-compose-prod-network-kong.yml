@@ -1,0 +1,12 @@
+version: '3.8'
+
+services:
+
+  api:
+    networks:
+     - default
+     - apis-public1
+
+networks:
+  apis-public1:
+    external: true

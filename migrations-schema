@@ -1,0 +1,14 @@
+#!/bin/sh
+
+if [ $MIGRATE_DROP = "true" ]; then
+    echo "Dumping database ..."
+    yarn schema:drop -r
+fi
+
+echo "Sync Schema ..."
+yarn schema:sync
+
+if [ $MIGRATIONS_WITH_TYPEORM = "true" ]; then
+    echo "Running Migrations and Seeds ..."
+    yarn run typeorm:cli migration:run
+fi

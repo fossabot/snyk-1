@@ -1,0 +1,13 @@
+version: '3.8'
+
+services:
+
+  api:
+    networks:
+     - default
+     - traefik-ingress
+     #- apis-public1
+
+networks:
+  traefik-ingress:
+    external: true

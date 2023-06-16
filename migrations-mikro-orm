@@ -1,0 +1,9 @@
+#!/bin/sh
+
+if [ $MIGRATE_DROP = "true" ]; then
+    echo "Dumping database ..."
+    yarn mikro-orm schema:drop -r
+    yarn mikro-orm migration:fresh --seed
+fi
+
+yarn mikro-orm migration:up

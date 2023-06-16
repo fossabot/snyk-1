@@ -1,0 +1,27 @@
+version: '3.8'
+
+volumes:
+  db-backup:
+    driver: glusterfs:latest
+    name: "${STORAGE}/db-backups"
+
+services:
+  db-backup:
+    image: tiredofit/db-backup
+    volumes:
+      - db-backup:/backup
+      # - ./post-script.sh:/assets/custom-scripts/post-script.sh
+    environment:
+      - DB_TYPE=pgsql
+      - DB_HOST=db
+      - DB_NAME=${POSTGRES_DB}
+      - DB_USER=${POSTGRES_USER}
+      - DB_PASS=${POSTGRES_PASSWORD}
+      - DB_DUMP_FREQ=720
+      - DB_DUMP_BEGIN=0350
+      - DB_CLEANUP_TIME=2880
+      - DEBUG_MODE=true
+      - MD5=TRUE
+      - COMPRESSION=XZ
+      - SPLIT_DB=${SPLIT_DB:-true}
+    restart: always

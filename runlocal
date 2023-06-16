@@ -1,0 +1,16 @@
+#!/bin/sh
+
+# yarn Install
+if [ $PNPM = "false" ]; then
+    yarn
+else
+    pnpm i
+fi
+
+# npm start
+if [ $PNPM = "false" ]; then
+    yarn ${APP_YARN_CMD}
+else
+    # pnpm ${APP_PNPM_CMD}
+    pnpm start dev
+fi

@@ -1,0 +1,10 @@
+version: '3.8'
+services:
+
+  db:
+    volumes:
+      - "./db/db-data/pg_data:/var/lib/postgresql/data:rw"
+      - "./db/dump:/docker-entrypoint-initdb.d:ro"
+
+    ports:
+      - "${POSTGRES_PORT_HOST}:5432"

@@ -1,0 +1,37 @@
+version: '3.8'
+
+services:
+
+  api:
+    deploy:
+      labels:
+        - traefik.enable=true
+        - traefik.docker.network=${TRAEFIK_NETWORK:-traefik-ingress}
+        - traefik.constraint-label=traefik-public
+        # headers
+        # - "traefik.http.middlewares.${APP_NAME}-headers.headers.sslProxyHeaders="
+        # - "traefik.http.middlewares.${APP_NAME}-headers.headers.sslRedirect=true"
+        - "traefik.http.middlewares.${APP_NAME}-headers.headers.customrequestheaders.X-Forwarded-Proto=https"
+        - "traefik.http.middlewares.${APP_NAME}-headers.headers.customrequestheaders.X-AppVersion-HashCommit=${LAST_COMMIT}"
+        - "traefik.http.middlewares.${APP_NAME}-headers.headers.customresponseheaders.X-Forwarded-Proto=https"
+        - "traefik.http.middlewares.${APP_NAME}-headers.headers.customresponseheaders.X-AppVersion-HashCommit=${LAST_COMMIT}"
+        # http
+        - traefik.http.routers.${APP_NAME}-http.rule=Host(`${DOMAIN?Variable DOMAIN not set}`) ${SUBPATH} || Host(`${DOMAIN_LOCALPROD?Variable DOMAIN_LOCALPROD not set}`) ${SUBPATH}
+        - traefik.http.routers.${APP_NAME}-http.entrypoints=http
+        - traefik.http.routers.${APP_NAME}-http.middlewares=${APP_NAME}-headers,${APP_NAME}-stripprefix # ${APP_NAME}-redirect
+        # redirect
+        - traefik.http.middlewares.${APP_NAME}-redirect.redirectscheme.scheme=https
+        - traefik.http.middlewares.${APP_NAME}-redirect.redirectscheme.permanent=true
+        #https
+        - traefik.http.routers.${APP_NAME}.rule=Host(`${DOMAIN?Variable DOMAIN not set}`) ${SUBPATH} || Host(`${DOMAIN_LOCALPROD?Variable DOMAIN_LOCALPROD not set}`) ${SUBPATH}
+        - traefik.http.middlewares.${APP_NAME}-stripprefix.stripprefix.prefixes=${SUBPATH_TRAEFIK}
+        # - traefik.http.middlewares.${APP_NAME}-addprefix.addprefix.prefix=/${BASE_PATH}
+        - traefik.http.routers.${APP_NAME}.middlewares=${APP_NAME}-headers,${APP_NAME}-stripprefix
+        # - traefik.http.routers.${APP_NAME}.middlewares=${APP_NAME}-headers
+        - traefik.http.routers.${APP_NAME}.entrypoints=https
+        - traefik.http.routers.${APP_NAME}.tls=true
+        - traefik.http.services.${APP_NAME}-public.loadbalancer.server.port=3000
+        - traefik.http.services.${APP_NAME}-public.loadbalancer.healthcheck.path=/${HEALTHCHECK_ENDPOINT}
+        - traefik.http.services.${APP_NAME}-public.loadbalancer.healthcheck.interval=15s
+        - traefik.http.services.${APP_NAME}-public.loadbalancer.healthcheck.timeout=6s
+    

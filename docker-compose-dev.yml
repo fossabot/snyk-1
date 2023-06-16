@@ -1,0 +1,17 @@
+version: '3.8'
+
+services:
+
+  api:
+    container_name: ${APP_NAME}_api
+    build:
+      context: ../
+      dockerfile: docker-nestjs-environment/Dockerfile
+      target: develop
+    volumes:
+      - .././:/app
+    ports:
+      - "${DEV_PORT:-3000}:${PORT:-3000}"
+      # - "${WEB_SOCKET_PORT:-9090}:9090"
+    working_dir: /app
+    entrypoint: /app/docker-nestjs-environment/runlocal

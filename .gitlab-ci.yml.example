@@ -1,0 +1,179 @@
+stages:
+  - validate
+  - keycloak_client
+  - build
+  - deploy
+  - create_badges
+
+variables:
+  GIT_SUBMODULE_STRATEGY: recursive
+
+
+validate-docker-configuration:
+  stage: validate
+  script:
+    - cp .env.example .env
+    - cd docker-nestjs-environment
+    - make prod-validateconf
+  only:
+    - main
+    - develop
+  tags:
+    - $DEPLOY_SERVERS_PROD
+
+create_badge_svg:
+  stage: create_badges
+  image: python:3.9.4-buster
+  tags:
+    - docker-runner
+  script:
+    - echo "Python other dependencies installation"
+  after_script:
+    - pip install anybadge
+    - apt update && apt install -y jq
+    - commits=$(git rev-list --all --count)
+    - anybadge -l commits -v $commits -f commits.svg -c blue
+    - 'VERSION=$(curl -Ss --request GET --header "PRIVATE-TOKEN: ${CI_GROUP_TOKEN}" "${CI_SERVER_PROTOCOL}://${CI_SERVER_HOST}/api/v4/projects/${CI_PROJECT_ID}/repository/tags" | jq -r ".[0] | .name")'
+    - anybadge -l version -v $VERSION -f version.svg -c green
+    - test -z "$VERSION" && echo "no version tag found" && exit 1
+  artifacts:
+    paths:
+        - commits.svg
+        - version.svg
+    when: always
+    expire_in: 4 weeks
+  only:
+    - main
+
+#####################################################
+##-------------------------------------------------##
+##                   Homolog                       ##
+##-------------------------------------------------##
+#####################################################
+
+# create homolog keycloak client:
+#   stage: keycloak_client
+#   script:
+#     - cd docker-nestjs-environment
+#     - ansible-playbook create-keycloak-client.yml
+#   environment:
+#     name: dev
+#     url: http://$DOMAIN
+#   only:
+#     - develop
+#   tags:
+#     - $DEPLOY_SERVERS_HOMOLOG
+
+
+build homolog:
+  stage: build
+  before_script:
+    - cp .env.example .env
+    - cp .env docker-nestjs-environment/.env
+  script:
+    - docker login -u $CI_GROUP_USER -p $CI_GROUP_TOKEN $CI_REGISTRY
+    - 'VERSAO=$(curl -Ss --request GET --header "PRIVATE-TOKEN: ${CI_GROUP_TOKEN}" "${CI_SERVER_PROTOCOL}://${CI_SERVER_HOST}/api/v4/projects/${CI_PROJECT_ID}/repository/tags" | jq -r ".[0] | .name")'
+    - export VERSAO=${VERSAO}
+    - 'LAST_COMMIT=$(git log -n 1 --pretty=format:"%H" |cut -c -8)'
+    - export LAST_COMMIT=${LAST_COMMIT}
+    - cd docker-nestjs-environment
+    - make prod-build
+    - make prod-push
+  environment:
+    name: dev
+    url: http://$DOMAIN$SUBPATH_TRAEFIK
+  only:
+    - develop
+  tags:
+    - $BUILD_SERVERS_HOMOLOG
+
+deploy stack to homolog:
+  stage: deploy
+  before_script:
+    - cp .env.example .env 
+    - cp .env docker-nestjs-environment/.env
+    - docker node update --label-add ${APP_NAME}.db-data=true ${NODE_ID}
+  script:
+    - 'VERSAO=$(curl -Ss --request GET --header "PRIVATE-TOKEN: ${CI_GROUP_TOKEN}" "${CI_SERVER_PROTOCOL}://${CI_SERVER_HOST}/api/v4/projects/${CI_PROJECT_ID}/repository/tags" | jq -r ".[0] | .name")'
+    - export VERSAO=${VERSAO}
+    - 'LAST_COMMIT=$(git log -n 1 --pretty=format:"%H" |cut -c -8)'
+    - export LAST_COMMIT=${LAST_COMMIT}
+    - docker login -u $CI_GROUP_USER -p $CI_GROUP_TOKEN $CI_REGISTRY
+    # - ansible -i ~/swarm.inventory swarm -a "docker login -u $CI_GROUP_USER -p $CI_GROUP_TOKEN $CI_REGISTRY"
+    # Launch stack
+    - cd docker-nestjs-environment
+    # - sed -i "s|traefik-public|$TRAEFIK_NETWORK|g" docker-compose-prod-network.yml
+    - make prod-deploy-swarm app=$APP_NAME
+  environment:
+    name: dev
+    url: http://$DOMAIN$SUBPATH_TRAEFIK
+  only:
+    - develop
+  tags:
+    - $DEPLOY_SERVERS_HOMOLOG
+
+
+#####################################################
+##-------------------------------------------------##
+##                   Production                    ##
+##-------------------------------------------------##
+#####################################################
+
+# create production keycloak client:
+#   stage: keycloak_client
+#   script:
+#     - cd docker-nestjs-environment
+#     - ansible-playbook create-keycloak-client.yml
+#   environment:
+#     name: prod
+#     url: http://$DOMAIN
+#   only:
+#     - main
+#   tags:
+#     - $DEPLOY_SERVERS_PROD
+
+build production:
+  stage: build
+  before_script:
+    - cp .env.example .env
+    - cp .env docker-nestjs-environment/.env
+  script:
+    - docker login -u $CI_GROUP_USER -p $CI_GROUP_TOKEN $CI_REGISTRY
+    - 'VERSAO=$(curl -Ss --request GET --header "PRIVATE-TOKEN: ${CI_GROUP_TOKEN}" "${CI_SERVER_PROTOCOL}://${CI_SERVER_HOST}/api/v4/projects/${CI_PROJECT_ID}/repository/tags" | jq -r ".[0] | .name")'
+    - export VERSAO=${VERSAO}
+    - 'LAST_COMMIT=$(git log -n 1 --pretty=format:"%H" |cut -c -8)'
+    - export LAST_COMMIT=${LAST_COMMIT}
+    - cd docker-nestjs-environment
+    - make prod-build
+    - make prod-push
+  environment:
+    name: prod
+    url: https://$DOMAIN$SUBPATH_TRAEFIK
+  only:
+    - main
+  tags:
+    - $BUILD_SERVERS_PROD
+
+deploy stack to production:
+  stage: deploy
+  before_script:
+    - cp .env.example .env
+    - cp .env docker-nestjs-environment/.env
+    - docker node update --label-add ${APP_NAME}.db-data=true ${NODE_ID}
+  script:
+    - 'VERSAO=$(curl -Ss --request GET --header "PRIVATE-TOKEN: ${CI_GROUP_TOKEN}" "${CI_SERVER_PROTOCOL}://${CI_SERVER_HOST}/api/v4/projects/${CI_PROJECT_ID}/repository/tags" | jq -r ".[0] | .name")'
+    - export VERSAO=${VERSAO}
+    - 'LAST_COMMIT=$(git log -n 1 --pretty=format:"%H" |cut -c -8)'
+    - export LAST_COMMIT=${LAST_COMMIT}
+    - docker login -u $CI_GROUP_USER -p $CI_GROUP_TOKEN $CI_REGISTRY
+    # - ansible -i ~/swarm.inventory swarm -a "docker login -u $CI_GROUP_USER -p $CI_GROUP_TOKEN $CI_REGISTRY"
+    # Launch stack
+    - cd docker-nestjs-environment
+    - make prod-deploy-swarm app=$APP_NAME
+  environment:
+    name: prod
+    url: https://$DOMAIN$SUBPATH_TRAEFIK
+  only:
+    - main
+  tags:
+    - $DEPLOY_SERVERS_PROD
