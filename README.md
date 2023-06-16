@@ -3,7 +3,8 @@
 
 <!-- [![NPM Version][npm-image]][npm-url]
 [![Build Status][travis-image]][travis-url]
-[![Downloads Stats][npm-downloads]][npm-url] -->
+[![Downloads Stats][npm-downloads]][npm-url] [![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Fmadson7%2Fsnyk.svg?type=shield)](https://app.fossa.com/projects/git%2Bgithub.com%2Fmadson7%2Fsnyk?ref=badge_shield)
+-->
 
 Este ambiente lhe permitirá executar localmente para desenvolvimento e também criar e realizar o deploy da aplicação nos clusters de homologação e produção do DECEA.
 
@@ -190,3 +191,6 @@ Distribuído sob a licença XYZ. Veja `LICENSE` para mais informações.
 [travis-image]: https://img.shields.io/travis/dbader/node-datadog-metrics/master.svg?style=flat-square
 [travis-url]: https://travis-ci.org/dbader/node-datadog-metrics
 [wiki]: https://github.com/seunome/seuprojeto/wiki -->
+
+## License
+[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Fmadson7%2Fsnyk.svg?type=large)](https://app.fossa.com/projects/git%2Bgithub.com%2Fmadson7%2Fsnyk?ref=badge_large)
